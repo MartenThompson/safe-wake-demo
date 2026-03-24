@@ -7,13 +7,13 @@ This is an illustration only, not legal or navigational advice.
 
 ## Site (GitHub Pages)
 
-The UI lives under [`web_app/`](web_app/). Browsers often block `fetch()` to local GeoJSON when opening `index.html` as a `file://` URL; run a tiny static server from `web_app` for local testing, for example:
+The UI lives under [`docs/`](docs/) so GitHub Pages can serve from the **docs** folder. Browsers often block `fetch()` to local GeoJSON when opening `index.html` as a `file://` URL; run a tiny static server from `docs` for local testing, for example:
 
 ```bash
-cd web_app && ../.venv/bin/python -m http.server 8080
+cd docs && ../.venv/bin/python -m http.server 8080
 ```
 
-Then open `http://127.0.0.1:8080/`. Publish the `web_app` folder (or project root, depending on your Pages settings) so assets load over **HTTPS**; geolocation typically requires a secure context.
+Then open `http://127.0.0.1:8080/`. In GitHub repo settings, set Pages to publish from the **`/docs` folder** on your default branch (or your chosen source) so assets load over **HTTPS**; geolocation typically requires a secure context.
 
 ## Regenerating map data
 
@@ -26,14 +26,14 @@ Requires **Python 3.12**:
 
 That reads [`data/mn_lake_bathymetry/`](data/mn_lake_bathymetry/) shapefiles and [`scripts/lake_manifest.json`](scripts/lake_manifest.json), then writes:
 
-- [`web_app/data/safe_wake.geojson`](web_app/data/safe_wake.geojson)
-- [`web_app/data/lake_outlines.geojson`](web_app/data/lake_outlines.geojson)
+- [`docs/data/safe_wake.geojson`](docs/data/safe_wake.geojson)
+- [`docs/data/lake_outlines.geojson`](docs/data/lake_outlines.geojson)
 
 ## Data source and attribution
 
 **Bathymetry:** Minnesota Department of Natural Resources (DNR), *Lake Bathymetric Outlines, Contours, and DEM* (Fish & Wildlife). Dataset page: [Minnesota Geospatial Commons — water-lake-bathymetry](http://gisdata.mn.gov/dataset/water-lake-bathymetry).
 
-**Derivative layers:** The GeoJSON published in `web_app/data/` is derived from DNR **lake outlines** and **depth contours** by intersecting (1) an inward buffer of **100 ft** from the shoreline with (2) the area inside the shallowest contour that still meets **≥ 20 ft** depth (contour depth ≤ −20 in the DNR attribute convention).
+**Derivative layers:** The GeoJSON published in `docs/data/` is derived from DNR **lake outlines** and **depth contours** by intersecting (1) an inward buffer of **100 ft** from the shoreline with (2) the area inside the shallowest contour that still meets **≥ 20 ft** depth (contour depth ≤ −20 in the DNR attribute convention).
 
 **License:** Use and redistribution of the data and these derivatives are subject to the Minnesota DNR **General Geographic Data License Agreement**:
 

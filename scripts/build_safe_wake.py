@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build precomputed safe-wake GeoJSON for static web_app from DNR shapefiles."""
+"""Build precomputed safe-wake GeoJSON for static site (docs/) from DNR shapefiles."""
 
 from __future__ import annotations
 
@@ -112,7 +112,7 @@ def main() -> int:
     contours_path = (
         root / "data" / "mn_lake_bathymetry" / "lake_bathymetric_contours.shp"
     )
-    out_dir = root / "web_app" / "data"
+    out_dir = root / "docs" / "data"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     with manifest_path.open(encoding="utf-8") as f:
