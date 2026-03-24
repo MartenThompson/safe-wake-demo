@@ -1,0 +1,72 @@
+[
+  {
+    "dowlknum": "34006200",
+    "lake_name": "Calhoun",
+    "county": "kandiyohi",
+    "common_name": "Calhoun Lake",
+    "notes": "DNR bathymetry contours in this dataset only reach about 10 ft; no 20+ ft deep polygon exists."
+  },
+  {
+    "dowlknum": "34007900",
+    "lake_name": "Green",
+    "county": "kandiyohi",
+    "common_name": "Green Lake",
+    "notes": "Listed as Green in DNR data (Spicer area)."
+  },
+  {
+    "dowlknum": "61013000",
+    "lake_name": "Minnewaska",
+    "county": "pope",
+    "common_name": "Lake Minnewaska",
+    "notes": ""
+  },
+  {
+    "dowlknum": "03057600",
+    "lake_name": "Big Cormorant",
+    "county": "becker",
+    "common_name": "Big Cormorant Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "56024200",
+    "lake_name": "Otter Tail",
+    "county": "otter tail",
+    "common_name": "Otter Tail Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "03038100",
+    "lake_name": "Detroit",
+    "county": "becker",
+    "common_name": "Detroit Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "21008300",
+    "lake_name": "Miltona",
+    "county": "douglas",
+    "common_name": "Lake Miltona",
+    "notes": ""
+  },
+  {
+    "dowlknum": "21012300",
+    "lake_name": "Ida",
+    "county": "douglas",
+    "common_name": "Lake Ida",
+    "notes": ""
+  },
+  {
+    "dowlknum": "73020002",
+    "lake_name": "Koronis (main lake)",
+    "county": "stearns",
+    "common_name": "Lake Koronis",
+    "notes": ""
+  },
+  {
+    "dowlknum": "21005600",
+    "lake_name": "Le Homme Dieu",
+    "county": "douglas",
+    "common_name": "Lake Le Homme Dieu",
+    "notes": ""
+  }
+]
