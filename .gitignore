@@ -28,3 +28,9 @@ replay_pid*
 
 # venv
 .venv/
+
+# Project specific 
+data/mn_lake_bathymetry/lake_bathymetric_contours.shp
+# This large file is required for the build_safe_wake.py script, but exceeds GitHub's file size limit.
+# You will need to download it from the Minnesota DNR website and place it in the data/mn_lake_bathymetry directory.
+# https://gisdata.mn.gov/dataset/water-lake-bathymetry
