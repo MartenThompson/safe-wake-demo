@@ -44,7 +44,7 @@
     },
   ).addTo(map);
 
-  map.setView(DEFAULT_CENTER, 9);
+  map.setView(DEFAULT_CENTER, 11);
 
   const outlineLayer = L.geoJSON(null, {
     style: {
@@ -401,7 +401,7 @@
       const combined = L.featureGroup([outlineLayer, safeLayer]);
       const bounds = combined.getBounds().pad(0.08);
       const fitZoom = map.getBoundsZoom(bounds);
-      const targetZoom = Math.min(fitZoom + 3, map.getMaxZoom());
+      const targetZoom = Math.min(fitZoom + 5, map.getMaxZoom());
       defaultDetailZoom = targetZoom;
       map.invalidateSize();
       map.setView(DEFAULT_CENTER, targetZoom);
