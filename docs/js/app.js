@@ -10,6 +10,11 @@
   const map = L.map("map", { zoomControl: true });
   map.zoomControl.setPosition("topleft");
 
+  /* CARTO label tiles above polygons (overlayPane=400) but below markers (600): package typography. */
+  map.createPane("cartoLabels");
+  map.getPane("cartoLabels").style.zIndex = "550";
+  map.getPane("cartoLabels").style.pointerEvents = "none";
+
   /* Must exist before any setView (zoomend can fire synchronously and touch warningMarkers). */
   const warningMarkers = [];
   /** Post-load default zoom; at this level and more zoomed out, warning is triangle-only. */
@@ -25,6 +30,17 @@
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: "abcd",
       maxZoom: 20,
+    },
+  ).addTo(map);
+
+  /* OSM-derived names (lakes, towns, etc.) in CARTO Positron typography; attribution on base layer. */
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
+    {
+      attribution: "",
+      subdomains: "abcd",
+      maxZoom: 20,
+      pane: "cartoLabels",
     },
   ).addTo(map);
 
