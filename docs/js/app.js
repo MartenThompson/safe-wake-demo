@@ -374,7 +374,7 @@
     }
   }
 
-  map.on("locationfound", function (e) {
+  map.on("locationfound locationupdate", function (e) {
     updateStatusForLatLng(e.latlng);
   });
 
