@@ -10,7 +10,7 @@ This is an illustration only, not legal or navigational advice.
 The UI lives under [`docs/`](docs/) so GitHub Pages can serve from the **docs** folder. Browsers often block `fetch()` to local GeoJSON when opening `index.html` as a `file://` URL; run a tiny static server from `docs` for local testing, for example:
 
 ```bash
-cd docs && ../.venv/bin/python -m http.server 8080
+.venv/bin/python -m http.server 8080 --directory docs
 ```
 
 Then open `http://127.0.0.1:8080/`. In GitHub repo settings, set Pages to publish from the **`/docs` folder** on your default branch (or your chosen source) so assets load over **HTTPS**; geolocation typically requires a secure context.
