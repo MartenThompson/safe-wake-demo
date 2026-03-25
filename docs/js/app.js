@@ -212,16 +212,34 @@
   const WARNING_SVG_PATH =
     '<path fill="#a16207" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>';
 
+  function escapeHtmlText(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function escapeHtmlAttr(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;");
+  }
+
   /**
    * Badge sized to the lake screen bbox. Zoom <= defaultDetailZoom: triangle only; zoom in: full text.
    */
-  function buildWarningDivIcon(outlineFeature) {
+  function buildWarningDivIcon(outlineFeature, lakeName) {
     const screen = computeLakeBBoxScreenPx(outlineFeature);
     const margin = 0.86;
     const maxW = screen.w * margin;
     const maxH = screen.h * margin;
     const showFullText =
       defaultDetailZoom !== null && map.getZoom() > defaultDetailZoom;
+
+    const labelLake = lakeName || "this lake";
+    const compactAria =
+      "No safe wake zones in " + labelLake.replace(/"/g, "'");
 
     if (!showFullText) {
       const minSide = Math.min(maxW, maxH);
@@ -232,7 +250,9 @@
       const iconH = iconW;
       const svgS = Math.max(14, Math.floor(iconW * 0.48));
       const html =
-        '<div class="no-safe-zone-badge no-safe-zone-badge--compact" role="img" aria-label="No safe wake zones in lake" style="width:' +
+        '<div class="no-safe-zone-badge no-safe-zone-badge--compact" role="img" aria-label="' +
+        escapeHtmlAttr(compactAria) +
+        '" style="width:' +
         iconW +
         "px;height:" +
         iconH +
@@ -283,7 +303,9 @@
       '" aria-hidden="true">' +
       WARNING_SVG_PATH +
       "</svg>" +
-      "<span>No safe wake zones in lake</span>" +
+      "<span>No safe wake zones in " +
+      escapeHtmlText(labelLake) +
+      "</span>" +
       "</div>";
     return {
       icon: L.divIcon({
@@ -299,7 +321,10 @@
   function refreshWarningBadgeSizes() {
     if (!warningMarkers.length) return;
     warningMarkers.forEach(function (entry) {
-      const built = buildWarningDivIcon(entry.outlineFeature);
+      const built = buildWarningDivIcon(
+        entry.outlineFeature,
+        entry.lakeName,
+      );
       entry.marker.setIcon(built.icon);
       entry.marker.setLatLng(built.latlng);
     });
@@ -319,7 +344,7 @@
       const ol = byDow[dow];
       if (!ol) return;
       const name = f.properties.name || f.properties.lake_name || "Lake";
-      const built = buildWarningDivIcon(ol);
+      const built = buildWarningDivIcon(ol, name);
       const marker = L.marker(built.latlng, {
         icon: built.icon,
         zIndexOffset: 2500,
@@ -329,7 +354,11 @@
           name +
             ": no safe wake zone in this dataset for the demo rules (e.g. depth in contours below 20 ft).",
         );
-      warningMarkers.push({ marker: marker, outlineFeature: ol });
+      warningMarkers.push({
+        marker: marker,
+        outlineFeature: ol,
+        lakeName: name,
+      });
     });
   }
 
