@@ -28,12 +28,56 @@
       <p class="map-legend-detail">
         Safe wake zones are at least 100 ft from shore and at least 20 ft deep.
       </p>
-      <p id="status" class="status-line">
-        Load the map, then tap the compass control on the map to see if you are
-        inside a precomputed safe zone.
-      </p>
+      <p id="status" class="status-line" aria-live="polite"></p>
     </header>
-    <div id="map" role="application" aria-label="Map of Minnesota lakes"></div>
+    <div class="map-shell map-shell--idle" id="map-shell">
+      <div
+        class="map-location-banner"
+        id="map-location-banner"
+        hidden
+        role="status"
+        aria-live="polite"
+      ></div>
+      <div id="map" role="application" aria-label="Map of Minnesota lakes"></div>
+    </div>
+    <div
+      id="intro-modal"
+      class="intro-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="intro-modal-title"
+    >
+      <div class="intro-modal__backdrop" aria-hidden="true"></div>
+      <div class="intro-modal__panel">
+        <h2 id="intro-modal-title" class="intro-modal__title">
+          Minnesota Safe Wake App
+        </h2>
+        <p class="intro-modal__lead">
+          Use the map to explore safe wake zones.
+        </p>
+        <p class="intro-modal__lead">
+          To see whether you are currently in a safe wake zone, tap the
+          <span class="compass-icon-inline" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              width="20"
+              height="20"
+              focusable="false"
+            >
+              <path
+                fill="currentColor"
+                d="M445 4 29 195c-48 23-32 93 19 93h176v176c0 51 70 67 93 19L508 67c16-38-25-79-63-63z"
+              />
+            </svg>
+          </span>
+          icon.
+        </p>
+        <button type="button" class="intro-modal__btn" id="intro-modal-dismiss">
+          Got it
+        </button>
+      </div>
+    </div>
     <footer class="site-footer">
       <section aria-labelledby="data-heading">
         <h2 id="data-heading">Data source and license</h2>

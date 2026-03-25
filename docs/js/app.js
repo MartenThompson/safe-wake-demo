@@ -68,6 +68,21 @@
   warningLayer.addTo(map);
 
   const statusEl = document.getElementById("status");
+  const mapShell = document.getElementById("map-shell");
+  const locationBanner = document.getElementById("map-location-banner");
+  let lastKnownLatLng = null;
+
+  const introModal = document.getElementById("intro-modal");
+  const introDismiss = document.getElementById("intro-modal-dismiss");
+  if (introModal && introDismiss) {
+    if (sessionStorage.getItem("introModalSeen") === "1") {
+      introModal.hidden = true;
+    }
+    introDismiss.addEventListener("click", function () {
+      introModal.hidden = true;
+      sessionStorage.setItem("introModalSeen", "1");
+    });
+  }
 
   L.control
     .locate({
@@ -100,6 +115,7 @@
         title: "Show my location",
       },
       onLocationError: function (err) {
+        setLocationShellState("idle");
         setStatus(
           err.message ||
             "Location permission denied or unavailable. Allow location for this site (HTTPS may be required).",
@@ -108,14 +124,23 @@
       onLocationOutsideMapBounds: function (ctrl) {
         ctrl.stop();
         setStatus(
-          "Your location appears outside the mapped lakes for this demo.",
+          "Your location appears outside the mapped area for this demo.",
         );
+        if (lastKnownLatLng) {
+          updateLocationForLatLng(lastKnownLatLng);
+        } else {
+          setLocationShellState("unknown");
+        }
       },
     })
     .addTo(map);
 
   map.on("locateactivate", function () {
-    setStatus("Requesting location…");
+    setLocationShellState("locating");
+  });
+
+  map.on("locatedeactivate", function () {
+    setLocationShellState("idle");
   });
 
   map.on("zoomend", function () {
@@ -155,6 +180,79 @@
       }
     }
     return names;
+  }
+
+  function pointInAnyLakeOutline(lng, lat, outlineFc) {
+    if (!outlineFc || !outlineFc.features || typeof turf === "undefined") {
+      return false;
+    }
+    const pt = turf.point([lng, lat]);
+    for (let i = 0; i < outlineFc.features.length; i++) {
+      const f = outlineFc.features[i];
+      if (isEmptyGeom(f.geometry)) continue;
+      try {
+        if (turf.booleanPointInPolygon(pt, f)) {
+          return true;
+        }
+      } catch {
+        /* ignore invalid geometry */
+      }
+    }
+    return false;
+  }
+
+  /**
+   * safe: inside a precomputed green safe-wake polygon.
+   * notSafe: inside a lake outline but not in a safe zone (shore band, holes, or no zone).
+   * unknown: outside all analyzed lake outlines (or data not ready).
+   */
+  function classifyLocation(latlng) {
+    const safeFc = window._safeWakeFc;
+    const outlineFc = window._lakeOutlinesFc;
+    if (!safeFc || !outlineFc || typeof turf === "undefined") {
+      return "unknown";
+    }
+    const names = pointInSafeWake(latlng.lng, latlng.lat, safeFc);
+    if (names && names.length > 0) {
+      return "safe";
+    }
+    if (pointInAnyLakeOutline(latlng.lng, latlng.lat, outlineFc)) {
+      return "notSafe";
+    }
+    return "unknown";
+  }
+
+  function setLocationShellState(state) {
+    if (!mapShell || !locationBanner) return;
+    mapShell.classList.remove(
+      "map-shell--idle",
+      "map-shell--locating",
+      "map-shell--safe",
+      "map-shell--not-safe",
+      "map-shell--unknown",
+    );
+    const labels = {
+      idle: "",
+      locating: "Locating…",
+      safe: "In safe wake zone",
+      notSafe: "Not in safe wake zone",
+      unknown: "Unknown",
+    };
+    if (state === "idle") {
+      mapShell.classList.add("map-shell--idle");
+      locationBanner.hidden = true;
+      locationBanner.textContent = "";
+      return;
+    }
+    const shellClass = {
+      safe: "map-shell--safe",
+      notSafe: "map-shell--not-safe",
+      unknown: "map-shell--unknown",
+      locating: "map-shell--locating",
+    };
+    mapShell.classList.add(shellClass[state] || "map-shell--unknown");
+    locationBanner.hidden = false;
+    locationBanner.textContent = labels[state] || labels.unknown;
   }
 
   function setStatus(msg) {
@@ -361,21 +459,20 @@
     });
   }
 
-  function updateStatusForLatLng(latlng) {
-    const names = pointInSafeWake(latlng.lng, latlng.lat, window._safeWakeFc);
-    if (names && names.length > 0) {
-      setStatus(
-        "Your location is inside a safe wake zone.",
-      );
+  function updateLocationForLatLng(latlng) {
+    lastKnownLatLng = latlng;
+    const cat = classifyLocation(latlng);
+    if (cat === "safe") {
+      setLocationShellState("safe");
+    } else if (cat === "notSafe") {
+      setLocationShellState("notSafe");
     } else {
-      setStatus(
-        "Your location is not inside a safe wake zone for this demo (or zones are unavailable for that lake).",
-      );
+      setLocationShellState("unknown");
     }
   }
 
   map.on("locationfound locationupdate", function (e) {
-    updateStatusForLatLng(e.latlng);
+    updateLocationForLatLng(e.latlng);
   });
 
   function loadGeoJson(url) {
@@ -393,6 +490,7 @@
       const outlines = results[0];
       const safe = results[1];
       window._safeWakeFc = safe;
+      window._lakeOutlinesFc = outlines;
       outlineLayer.addData(outlines);
       safeLayer.addData(safe);
       const combined = L.featureGroup([outlineLayer, safeLayer]);
