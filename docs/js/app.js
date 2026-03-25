@@ -18,7 +18,7 @@
   /* Must exist before any setView (zoomend can fire synchronously and touch warningMarkers). */
   const warningMarkers = [];
   /* Added to map after lake layers so markers paint above polygons (see Promise.then). */
-  const warningLayer = L.layerGroup();
+  const warningLayer = L.featureGroup();
 
   /* CARTO Positron without labels: minimal roads; no highway/place text */
   L.tileLayer(
@@ -365,13 +365,11 @@
     const names = pointInSafeWake(latlng.lng, latlng.lat, window._safeWakeFc);
     if (names && names.length > 0) {
       setStatus(
-        "Your location appears inside a precomputed safe wake zone on: " +
-          names.join(", ") +
-          ".",
+        "Your location is inside a safe wake zone.",
       );
     } else {
       setStatus(
-        "Your location is not inside any precomputed safe wake zone for this demo (or zones are unavailable for that lake).",
+        "Your location is not inside a safe wake zone for this demo (or zones are unavailable for that lake).",
       );
     }
   }
