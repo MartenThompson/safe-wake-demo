@@ -68,5 +68,61 @@
     "county": "douglas",
     "common_name": "Lake Le Homme Dieu",
     "notes": ""
+  },
+  {
+    "dowlknum": "34004400",
+    "lake_name": "Diamond",
+    "county": "kandiyohi",
+    "common_name": "Diamond Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "34017100",
+    "lake_name": "Eagle",
+    "county": "kandiyohi",
+    "common_name": "Eagle Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "34019200",
+    "lake_name": "Long",
+    "county": "kandiyohi",
+    "common_name": "Long Lake (Kandiyohi)",
+    "notes": "Kandiyohi County Long Lake."
+  },
+  {
+    "dowlknum": "56038800",
+    "lake_name": "Long",
+    "county": "otter tail",
+    "common_name": "Long Lake (Otter Tail)",
+    "notes": "Otter Tail County Long Lake; second basin requested as Long Lake."
+  },
+  {
+    "dowlknum": "48000200",
+    "lake_name": "Mille Lacs",
+    "county": "mille lacs",
+    "common_name": "Mille Lacs Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "34015400",
+    "lake_name": "Nest",
+    "county": "kandiyohi",
+    "common_name": "Nest Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "34025100",
+    "lake_name": "Norway",
+    "county": "kandiyohi",
+    "common_name": "Norway Lake",
+    "notes": ""
+  },
+  {
+    "dowlknum": "34022400",
+    "lake_name": "Games",
+    "county": "kandiyohi",
+    "common_name": "Games Lake",
+    "notes": "DNR LAKE_NAME is Games (Kandiyohi County)."
   }
 ]
