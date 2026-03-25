@@ -17,8 +17,6 @@
 
   /* Must exist before any setView (zoomend can fire synchronously and touch warningMarkers). */
   const warningMarkers = [];
-  /** Post-load default zoom; at this level and more zoomed out, warning is triangle-only. */
-  let defaultDetailZoom = null;
   /* Added to map after lake layers so markers paint above polygons (see Promise.then). */
   const warningLayer = L.layerGroup();
 
@@ -227,21 +225,19 @@
   }
 
   /**
-   * Badge sized to the lake screen bbox. Zoom <= defaultDetailZoom: triangle only; zoom in: full text.
+   * Badge sized to the lake screen bbox. Icon-only until expanded by click.
    */
-  function buildWarningDivIcon(outlineFeature, lakeName) {
+  function buildWarningDivIcon(outlineFeature, lakeName, expanded) {
     const screen = computeLakeBBoxScreenPx(outlineFeature);
     const margin = 0.86;
     const maxW = screen.w * margin;
     const maxH = screen.h * margin;
-    const showFullText =
-      defaultDetailZoom !== null && map.getZoom() > defaultDetailZoom;
 
     const labelLake = lakeName || "this lake";
     const compactAria =
-      "No safe wake zones in " + labelLake.replace(/"/g, "'");
+      "No safe wake zones in " + labelLake.replace(/"/g, "'") + ".";
 
-    if (!showFullText) {
+    if (!expanded) {
       const minSide = Math.min(maxW, maxH);
       const iconW = Math.max(
         26,
@@ -305,7 +301,7 @@
       "</svg>" +
       "<span>No safe wake zones in " +
       escapeHtmlText(labelLake) +
-      "</span>" +
+      ".</span>" +
       "</div>";
     return {
       icon: L.divIcon({
@@ -324,6 +320,7 @@
       const built = buildWarningDivIcon(
         entry.outlineFeature,
         entry.lakeName,
+        entry.expanded,
       );
       entry.marker.setIcon(built.icon);
       entry.marker.setLatLng(built.latlng);
@@ -344,21 +341,24 @@
       const ol = byDow[dow];
       if (!ol) return;
       const name = f.properties.name || f.properties.lake_name || "Lake";
-      const built = buildWarningDivIcon(ol, name);
+      const entry = {
+        marker: null,
+        outlineFeature: ol,
+        lakeName: name,
+        expanded: false,
+      };
+      const built = buildWarningDivIcon(ol, name, false);
       const marker = L.marker(built.latlng, {
         icon: built.icon,
         zIndexOffset: 2500,
-      })
-        .addTo(warningLayer)
-        .bindPopup(
-          name +
-            ": no safe wake zone in this dataset for the demo rules (e.g. depth in contours below 20 ft).",
-        );
-      warningMarkers.push({
-        marker: marker,
-        outlineFeature: ol,
-        lakeName: name,
+      }).addTo(warningLayer);
+      entry.marker = marker;
+      marker.on("click", function (e) {
+        L.DomEvent.stopPropagation(e);
+        entry.expanded = !entry.expanded;
+        refreshWarningBadgeSizes();
       });
+      warningMarkers.push(entry);
     });
   }
 
@@ -402,7 +402,6 @@
       const bounds = combined.getBounds().pad(0.08);
       const fitZoom = map.getBoundsZoom(bounds);
       const targetZoom = Math.min(fitZoom + 5, map.getMaxZoom());
-      defaultDetailZoom = targetZoom;
       map.invalidateSize();
       map.setView(DEFAULT_CENTER, targetZoom);
       addNoSafeZoneWarnings(safe, outlines);

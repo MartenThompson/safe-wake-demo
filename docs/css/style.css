@@ -167,6 +167,7 @@ footer.site-footer a:hover {
   gap: 0.35rem;
   padding: 4px 6px;
   box-sizing: border-box;
+  cursor: pointer;
   background: rgba(234, 179, 8, 0.95);
   color: #1c1917;
   font-weight: 600;
