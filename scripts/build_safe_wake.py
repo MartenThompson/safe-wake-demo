@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import geopandas as gpd
+import pandas as pd
 from shapely.geometry import MultiPolygon, Polygon
 from shapely.ops import unary_union
 
@@ -16,7 +17,7 @@ WORK_CRS = "EPSG:26915"
 OUT_CRS = "EPSG:4326"
 FT_TO_M = 0.3048
 MIN_DEPTH_FT = 20.0
-SHORE_DISTANCE_FT = 100.0
+SHORE_DISTANCE_FT = 500.0
 
 
 def norm_dow(value: object) -> str:
@@ -105,6 +106,17 @@ def compute_safe(
     return safe if isinstance(safe, (Polygon, MultiPolygon)) else MultiPolygon([])
 
 
+def _coerce_attrs_for_fiona(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """Fiona cannot infer GeoJSON schema for pandas nullable StringDtype."""
+    out = gdf.copy()
+    for col in out.columns:
+        if col == "geometry":
+            continue
+        if pd.api.types.is_string_dtype(out[col]):
+            out[col] = out[col].astype(object)
+    return out
+
+
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
     manifest_path = root / "scripts" / "lake_manifest.json"
@@ -153,11 +165,15 @@ def main() -> int:
             }
         )
 
-    safe_gdf = gpd.GeoDataFrame(safe_rows, crs=WORK_CRS).to_crs(OUT_CRS)
+    safe_gdf = _coerce_attrs_for_fiona(
+        gpd.GeoDataFrame(safe_rows, crs=WORK_CRS).to_crs(OUT_CRS)
+    )
     out_safe = out_dir / "safe_wake.geojson"
     safe_gdf.to_file(out_safe, driver="GeoJSON")
 
-    ol_gdf = gpd.GeoDataFrame(outline_rows, crs=WORK_CRS).to_crs(OUT_CRS)
+    ol_gdf = _coerce_attrs_for_fiona(
+        gpd.GeoDataFrame(outline_rows, crs=WORK_CRS).to_crs(OUT_CRS)
+    )
     ol_gdf.to_file(out_dir / "lake_outlines.geojson", driver="GeoJSON")
 
     print(f"Wrote {out_safe} ({len(safe_gdf)} features)", file=sys.stderr)
