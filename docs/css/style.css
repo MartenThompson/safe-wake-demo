@@ -343,4 +343,20 @@ footer.site-footer a:hover {
   justify-content: center;
   align-items: center;
   padding: 4px;
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.no-safe-zone-badge--expanded {
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 0.875rem;
+}
+
+.no-safe-zone-badge--expanded span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }

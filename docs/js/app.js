@@ -143,14 +143,27 @@
     setLocationShellState("idle");
   });
 
-  map.on("zoomend", function () {
-    refreshWarningBadgeSizes();
+  function collapseAllWarningMarkers() {
+    let changed = false;
+    warningMarkers.forEach(function (entry) {
+      if (entry.expanded) {
+        entry.expanded = false;
+        changed = true;
+      }
+    });
+    if (changed) {
+      refreshWarningMarkers();
+    }
+  }
+
+  map.on("click", function () {
+    collapseAllWarningMarkers();
   });
-  map.on("moveend", function () {
-    refreshWarningBadgeSizes();
+  map.on("zoomstart", function () {
+    collapseAllWarningMarkers();
   });
-  map.on("resize", function () {
-    refreshWarningBadgeSizes();
+  map.on("movestart", function () {
+    collapseAllWarningMarkers();
   });
 
   function isEmptyGeom(g) {
@@ -259,25 +272,6 @@
     if (statusEl) statusEl.textContent = msg;
   }
 
-  /** Pixel width/height of the lake outline's axis-aligned bounding box at the current zoom. */
-  function computeLakeBBoxScreenPx(outlineFeature) {
-    if (typeof turf === "undefined") return { w: 120, h: 80 };
-    const size = map.getSize();
-    if (!size.x || !size.y) {
-      return { w: 120, h: 80 };
-    }
-    const bbox = turf.bbox(outlineFeature);
-    const sw = map.latLngToLayerPoint(L.latLng(bbox[1], bbox[0]));
-    const se = map.latLngToLayerPoint(L.latLng(bbox[1], bbox[2]));
-    const nw = map.latLngToLayerPoint(L.latLng(bbox[3], bbox[0]));
-    const w = Math.max(8, Math.abs(se.x - sw.x));
-    const h = Math.max(8, Math.abs(sw.y - nw.y));
-    if (!Number.isFinite(w) || !Number.isFinite(h)) {
-      return { w: 120, h: 80 };
-    }
-    return { w: w, h: h };
-  }
-
   /**
    * Prefer bbox center if inside the polygon; otherwise a point known to lie in the lake.
    */
@@ -321,39 +315,28 @@
       .replace(/</g, "&lt;");
   }
 
+  const WARNING_COMPACT_PX = 40;
+  const WARNING_SVG_COMPACT = 22;
+
   /**
-   * Badge sized to the lake screen bbox. Icon-only until expanded by click.
+   * Fixed-size compact icon; expanded is one line (CSS). Collapse on map click / zoom / pan.
    */
   function buildWarningDivIcon(outlineFeature, lakeName, expanded) {
-    const screen = computeLakeBBoxScreenPx(outlineFeature);
-    const margin = 0.86;
-    const maxW = screen.w * margin;
-    const maxH = screen.h * margin;
-
     const labelLake = lakeName || "this lake";
     const compactAria =
       "No safe wake zones in " + labelLake.replace(/"/g, "'") + ".";
 
     if (!expanded) {
-      const minSide = Math.min(maxW, maxH);
-      const iconW = Math.max(
-        26,
-        Math.min(52, Math.floor(minSide * 0.42)),
-      );
-      const iconH = iconW;
-      const svgS = Math.max(14, Math.floor(iconW * 0.48));
+      const iconW = WARNING_COMPACT_PX;
+      const iconH = WARNING_COMPACT_PX;
       const html =
         '<div class="no-safe-zone-badge no-safe-zone-badge--compact" role="img" aria-label="' +
         escapeHtmlAttr(compactAria) +
-        '" style="width:' +
-        iconW +
-        "px;height:" +
-        iconH +
-        'px;">' +
+        '">' +
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' +
-        svgS +
+        WARNING_SVG_COMPACT +
         '" height="' +
-        svgS +
+        WARNING_SVG_COMPACT +
         '">' +
         WARNING_SVG_PATH +
         "</svg></div>";
@@ -368,26 +351,15 @@
       };
     }
 
-    let fontSize = Math.max(
-      8,
-      Math.min(12, Math.min(maxW / 16, maxH / 5)),
-    );
-    let svgS = Math.round(fontSize * 1.1);
-    let contentH = 8 + svgS + fontSize * 1.3 * 2;
-    while (fontSize > 8 && contentH > maxH * 0.95) {
-      fontSize -= 0.5;
-      svgS = Math.round(fontSize * 1.1);
-      contentH = 8 + svgS + fontSize * 1.3 * 2;
-    }
-    const iconW = Math.min(Math.floor(maxW), 360);
-    const iconH = Math.min(Math.floor(maxH), Math.ceil(contentH));
+    const size = map.getSize();
+    const maxW = Math.min(360, Math.max(200, size.x ? size.x - 48 : 320));
+    const iconH = 34;
+    const svgS = 18;
     const html =
-      '<div class="no-safe-zone-badge" style="width:' +
-      iconW +
-      "px;height:" +
+      '<div class="no-safe-zone-badge no-safe-zone-badge--expanded" style="width:' +
+      maxW +
+      'px;height:' +
       iconH +
-      "px;font-size:" +
-      fontSize +
       'px;">' +
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' +
       svgS +
@@ -404,14 +376,14 @@
       icon: L.divIcon({
         className: "no-safe-zone-marker",
         html: html,
-        iconSize: [iconW, iconH],
-        iconAnchor: [Math.floor(iconW / 2), Math.floor(iconH / 2)],
+        iconSize: [maxW, iconH],
+        iconAnchor: [Math.floor(maxW / 2), Math.floor(iconH / 2)],
       }),
       latlng: pickWarningLatLng(outlineFeature),
     };
   }
 
-  function refreshWarningBadgeSizes() {
+  function refreshWarningMarkers() {
     if (!warningMarkers.length) return;
     warningMarkers.forEach(function (entry) {
       const built = buildWarningDivIcon(
@@ -452,8 +424,11 @@
       entry.marker = marker;
       marker.on("click", function (e) {
         L.DomEvent.stopPropagation(e);
-        entry.expanded = !entry.expanded;
-        refreshWarningBadgeSizes();
+        const willExpand = !entry.expanded;
+        warningMarkers.forEach(function (w) {
+          w.expanded = w === entry && willExpand;
+        });
+        refreshWarningMarkers();
       });
       warningMarkers.push(entry);
     });
@@ -503,7 +478,6 @@
       /* setView may not fire zoomend if zoom unchanged; always refresh after layout. */
       function refreshWhenStable() {
         map.invalidateSize();
-        refreshWarningBadgeSizes();
       }
       refreshWhenStable();
       requestAnimationFrame(function () {
