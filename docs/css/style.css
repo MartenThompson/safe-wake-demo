@@ -25,8 +25,8 @@ body {
 
 .map-shell {
   position: relative;
-  height: calc(100% - 15rem);
-  min-height: 260px;
+  height: calc(100% - 10rem);
+  min-height: calc(260px * 1.1);
   width: 100%;
   --map-ring-width: 6px;
   --map-ring-color: rgba(255, 255, 255, 0.18);
@@ -188,7 +188,7 @@ body {
 
 .app-title {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   font-weight: 600;
   width: 100%;
 }
