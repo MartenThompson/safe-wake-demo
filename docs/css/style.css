@@ -124,7 +124,8 @@ footer.site-footer a:hover {
 }
 
 .leaflet-container {
-  background: var(--water);
+  /* Matches CARTO Positron light tiles while tiles load */
+  background: #ececec;
   font-family: inherit;
 }
 
@@ -187,4 +188,10 @@ footer.site-footer a:hover {
 .no-safe-zone-badge svg {
   flex-shrink: 0;
   display: block;
+}
+
+.no-safe-zone-badge--compact {
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
 }

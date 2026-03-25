@@ -10,13 +10,25 @@
   const map = L.map("map", { zoomControl: true });
   map.zoomControl.setPosition("topleft");
 
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 19,
-  }).addTo(map);
+  /* Must exist before any setView (zoomend can fire synchronously and touch warningMarkers). */
+  const warningMarkers = [];
+  /** Post-load default zoom; at this level and more zoomed out, warning is triangle-only. */
+  let defaultDetailZoom = null;
+  /* Added to map after lake layers so markers paint above polygons (see Promise.then). */
+  const warningLayer = L.layerGroup();
 
-  map.setView(DEFAULT_CENTER, 8);
+  /* CARTO Positron without labels: minimal roads; no highway/place text */
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+    },
+  ).addTo(map);
+
+  map.setView(DEFAULT_CENTER, 9);
 
   const outlineLayer = L.geoJSON(null, {
     style: {
@@ -40,8 +52,7 @@
     },
   }).addTo(map);
 
-  const warningLayer = L.layerGroup().addTo(map);
-  const warningMarkers = [];
+  warningLayer.addTo(map);
 
   const statusEl = document.getElementById("status");
 
@@ -140,12 +151,19 @@
   /** Pixel width/height of the lake outline's axis-aligned bounding box at the current zoom. */
   function computeLakeBBoxScreenPx(outlineFeature) {
     if (typeof turf === "undefined") return { w: 120, h: 80 };
+    const size = map.getSize();
+    if (!size.x || !size.y) {
+      return { w: 120, h: 80 };
+    }
     const bbox = turf.bbox(outlineFeature);
     const sw = map.latLngToLayerPoint(L.latLng(bbox[1], bbox[0]));
     const se = map.latLngToLayerPoint(L.latLng(bbox[1], bbox[2]));
     const nw = map.latLngToLayerPoint(L.latLng(bbox[3], bbox[0]));
     const w = Math.max(8, Math.abs(se.x - sw.x));
     const h = Math.max(8, Math.abs(sw.y - nw.y));
+    if (!Number.isFinite(w) || !Number.isFinite(h)) {
+      return { w: 120, h: 80 };
+    }
     return { w: w, h: h };
   }
 
@@ -175,16 +193,52 @@
     }
   }
 
+  const WARNING_SVG_PATH =
+    '<path fill="#a16207" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>';
+
   /**
-   * Badge sized to fit inside the lake's screen bbox (with margin). Refreshes on zoom/pan.
-   * True containment inside irregular shorelines would need heavier geometry; bbox is a solid
-   * practical fit for typical lake shapes.
+   * Badge sized to the lake screen bbox. Zoom <= defaultDetailZoom: triangle only; zoom in: full text.
    */
   function buildWarningDivIcon(outlineFeature) {
     const screen = computeLakeBBoxScreenPx(outlineFeature);
     const margin = 0.86;
     const maxW = screen.w * margin;
     const maxH = screen.h * margin;
+    const showFullText =
+      defaultDetailZoom !== null && map.getZoom() > defaultDetailZoom;
+
+    if (!showFullText) {
+      const minSide = Math.min(maxW, maxH);
+      const iconW = Math.max(
+        26,
+        Math.min(52, Math.floor(minSide * 0.42)),
+      );
+      const iconH = iconW;
+      const svgS = Math.max(14, Math.floor(iconW * 0.48));
+      const html =
+        '<div class="no-safe-zone-badge no-safe-zone-badge--compact" role="img" aria-label="No safe wake zones in lake" style="width:' +
+        iconW +
+        "px;height:" +
+        iconH +
+        'px;">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' +
+        svgS +
+        '" height="' +
+        svgS +
+        '">' +
+        WARNING_SVG_PATH +
+        "</svg></div>";
+      return {
+        icon: L.divIcon({
+          className: "no-safe-zone-marker",
+          html: html,
+          iconSize: [iconW, iconH],
+          iconAnchor: [Math.floor(iconW / 2), Math.floor(iconH / 2)],
+        }),
+        latlng: pickWarningLatLng(outlineFeature),
+      };
+    }
+
     let fontSize = Math.max(
       8,
       Math.min(12, Math.min(maxW / 16, maxH / 5)),
@@ -211,7 +265,7 @@
       '" height="' +
       svgS +
       '" aria-hidden="true">' +
-      '<path fill="#a16207" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>' +
+      WARNING_SVG_PATH +
       "</svg>" +
       "<span>No safe wake zones in lake</span>" +
       "</div>";
@@ -250,7 +304,10 @@
       if (!ol) return;
       const name = f.properties.name || f.properties.lake_name || "Lake";
       const built = buildWarningDivIcon(ol);
-      const marker = L.marker(built.latlng, { icon: built.icon })
+      const marker = L.marker(built.latlng, {
+        icon: built.icon,
+        zIndexOffset: 2500,
+      })
         .addTo(warningLayer)
         .bindPopup(
           name +
@@ -296,14 +353,26 @@
       window._safeWakeFc = safe;
       outlineLayer.addData(outlines);
       safeLayer.addData(safe);
-      addNoSafeZoneWarnings(safe, outlines);
       const combined = L.featureGroup([outlineLayer, safeLayer]);
       const bounds = combined.getBounds().pad(0.08);
       const fitZoom = map.getBoundsZoom(bounds);
-      const targetZoom = Math.min(fitZoom + 2, map.getMaxZoom());
+      const targetZoom = Math.min(fitZoom + 3, map.getMaxZoom());
+      defaultDetailZoom = targetZoom;
+      map.invalidateSize();
       map.setView(DEFAULT_CENTER, targetZoom);
-      map.whenReady(function () {
+      addNoSafeZoneWarnings(safe, outlines);
+      /* setView may not fire zoomend if zoom unchanged; always refresh after layout. */
+      function refreshWhenStable() {
+        map.invalidateSize();
         refreshWarningBadgeSizes();
+      }
+      refreshWhenStable();
+      requestAnimationFrame(function () {
+        requestAnimationFrame(refreshWhenStable);
+      });
+      map.whenReady(function () {
+        refreshWhenStable();
+        warningLayer.bringToFront();
       });
     })
     .catch(function (err) {
