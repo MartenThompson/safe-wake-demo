@@ -61,8 +61,7 @@
       fillOpacity: 0.4,
     },
     onEachFeature: function (feature, layer) {
-      const n = feature.properties && feature.properties.name;
-      if (n) layer.bindPopup(n);
+      layer.bindPopup("Boat wakes up to 6 feet tall allowed.");
     },
   }).addTo(map);
 
