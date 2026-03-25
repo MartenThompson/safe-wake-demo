@@ -28,7 +28,7 @@ body {
   height: calc(100% - 12rem);
   min-height: calc(260px * 1.1);
   width: 100%;
-  --map-ring-width: 6px;
+  --map-ring-width: 12px;
   --map-ring-color: rgba(255, 255, 255, 0.18);
 }
 
@@ -60,11 +60,11 @@ body {
   left: 0;
   right: 0;
   z-index: 700;
-  padding: 0.55rem 0.75rem;
+  padding: 0.85rem 0.95rem;
   text-align: center;
   font-weight: 600;
-  font-size: 0.95rem;
-  line-height: 1.3;
+  font-size: 1.25rem;
+  line-height: 1.35;
   pointer-events: none;
 }
 
