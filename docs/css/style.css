@@ -25,7 +25,7 @@ body {
 
 .map-shell {
   position: relative;
-  height: calc(100% - 10rem);
+  height: calc(100% - 12rem);
   min-height: calc(260px * 1.1);
   width: 100%;
   --map-ring-width: 6px;
