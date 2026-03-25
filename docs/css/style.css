@@ -118,7 +118,6 @@ body {
   position: relative;
   width: 100%;
   max-width: 26rem;
-  min-height: min(85vh, 28rem);
   max-height: 90vh;
   overflow: auto;
   background: var(--panel);
