@@ -119,10 +119,73 @@
     "notes": ""
   },
   {
+    "dowlknum": "11030700",
+    "lake_name": "Norway",
+    "county": "cass",
+    "common_name": "Norway Lake (Cass)",
+    "notes": "DNR LAKE_NAME is Norway; this is the Cass County one."
+  },
+  {
+    "dowlknum": "56025200",
+    "lake_name": "Middle",
+    "county": "otter tail",
+    "common_name": "Middle Lake",
+    "notes": "DNR LAKE_NAME is Middle (Otter Tail County)."
+  },
+  {
+    "dowlknum": "21008500",
+    "lake_name": "Andrew",
+    "county": "douglas",
+    "common_name": "Andrew Lake (Douglas)",
+    "notes": "DNR LAKE_NAME is Andrew; Douglas County."
+  },
+  {
+    "dowlknum": "34020600",
+    "lake_name": "Andrew",
+    "county": "kandiyohi",
+    "common_name": "Andrew Lake (Kandiyohi)",
+    "notes": "DNR LAKE_NAME is Andrew; Kandiyohi County."
+  },
+  {
+    "dowlknum": "34021700",
+    "lake_name": "Florida",
+    "county": "kandiyohi",
+    "common_name": "Lake Florida",
+    "notes": ""
+  },
+  {
     "dowlknum": "34022400",
     "lake_name": "Games",
     "county": "kandiyohi",
     "common_name": "Games Lake",
     "notes": "DNR LAKE_NAME is Games (Kandiyohi County)."
+  },
+  {
+    "dowlknum": "11020301",
+    "lake_name": "Leech (Main Basin)",
+    "county": "cass",
+    "common_name": "Leech Lake",
+    "notes": "DNR LAKE_NAME is Leech (Main Basin)."
+  },
+  {
+    "dowlknum": "11014700",
+    "lake_name": "Winnibigoshish",
+    "county": "cass",
+    "common_name": "Lake Winnibigoshish",
+    "notes": ""
+  },
+  {
+    "dowlknum": "11030500",
+    "lake_name": "Gull",
+    "county": "cass",
+    "common_name": "Gull Lake",
+    "notes": "DNR LAKE_NAME is Gull; this is the large Cass County one."
+  },
+  {
+    "dowlknum": "27013300",
+    "lake_name": "Minnetonka",
+    "county": "hennepin",
+    "common_name": "Lake Minnetonka",
+    "notes": ""
   }
 ]
