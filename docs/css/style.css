@@ -355,6 +355,7 @@ footer.site-footer a:hover {
 }
 
 .no-safe-zone-badge--expanded span {
+  flex: 0 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

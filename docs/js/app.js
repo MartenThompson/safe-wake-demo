@@ -353,11 +353,15 @@
 
     const size = map.getSize();
     const maxW = Math.min(360, Math.max(200, size.x ? size.x - 48 : 320));
+    const warningText = "No safe wake zones in " + labelLake + ".";
+    // Estimate a tighter width so the badge doesn't look like it has huge right padding.
+    // Keep within map bounds, but avoid forcing a large minimum width.
+    const approxW = Math.min(maxW, Math.max(160, warningText.length * 7 + 44));
     const iconH = 34;
     const svgS = 18;
     const html =
       '<div class="no-safe-zone-badge no-safe-zone-badge--expanded" style="width:' +
-      maxW +
+      approxW +
       'px;height:' +
       iconH +
       'px;">' +
@@ -376,8 +380,8 @@
       icon: L.divIcon({
         className: "no-safe-zone-marker",
         html: html,
-        iconSize: [maxW, iconH],
-        iconAnchor: [Math.floor(maxW / 2), Math.floor(iconH / 2)],
+        iconSize: [approxW, iconH],
+        iconAnchor: [Math.floor(approxW / 2), Math.floor(iconH / 2)],
       }),
       latlng: pickWarningLatLng(outlineFeature),
     };
