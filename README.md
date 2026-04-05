@@ -1,19 +1,23 @@
 # safe-wake-demo
 
 
-This repo serves a demo webapp for recreational boaters on Minnesota lakes. It shows precomputed "safe wake" regions on selected lakes: water that is at least 500 feet from the shoreline and at least 20 feet deep, derived from Minnesota DNR lake bathymetry vectors. Within these regions, boaters are free to operate without restriction; outside safe wake regions, boaters should reduce speed/trim to minimize their wake and reduce shoreline erosion and habitat loss. 
+This repo serves a webapp for recreational boaters on Minnesota lakes informing them of "safe wake" regions on selected lakes. Within these regions, boaters are free to operate without restriction; outside safe wake regions, boaters should minimize their wake.
+
+The demo webapp is live at https://martenthompson.com/safe-wake-demo/ 
 
 This is an illustration only, not legal or navigational advice.
 
 
 ## Motivation: Environmental & Economic Impact
 
-When wake boats operate in shallow water, they disturb sediment and organic material that would otherwise not enter the water column. This increased mixing negatively affects the lake bottom habitat, worsens turbidity, and can foster algal blooms. Municipalities and counties then expend $100k-1M on water quality remediation.
+When wake boats operate in shallow water, they disturb sediment and organic material that would otherwise not enter the water column. This increased mixing negatively affects the lake bottom habitat, erodes the shoreline, worsens turbidity, and can foster algal blooms. Municipalities and counties then expend $100k-1M on water quality remediation.
 
 Additional news coverage can be found [here](https://nlslar.com/2026/03/27/wake-boats-under-scrutiny-as-research-reveals-damage-to-minnesota-lakes/), in addition to the [orginal study by the UMN St. Anthony Falls Laboratory (2022)](https://conservancy.umn.edu/items/bd2d2968-21c4-4726-8a61-53e7daafcb56).
 
 
 ## Usage
+
+The webapp displays "safe wake" regions on selected lakes. Within safe wake regions, boaters are free to create large wakes (e.g. for wake surfing). Outside safe wake regions, boaters should reduce speed/trim to minimize their wake and reduce shoreline erosion and habitat loss. 
 
 Users may inspect the safe wake regions around the state before boating. While on the water, the webapp can provide clear indication of whether they are in a safe wake zone or not.
 
@@ -23,6 +27,8 @@ Users may inspect the safe wake regions around the state before boating. While o
 
 
 ## Technical Details of Demo
+
+Safe wake regions define areas waters that are at least 500 feet from the shoreline and at least 20 feet deep, as derived from Minnesota DNR lake bathymetry vectors.
 
 ### Site (GitHub Pages)
 
