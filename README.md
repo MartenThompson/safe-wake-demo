@@ -72,4 +72,4 @@ Application source code in this repository may be under the terms in [`LICENSE`]
 
 ### Lake subset
 
-Ten lakes are listed in [`scripts/lake_manifest.json`](scripts/lake_manifest.json). 
+Analyzing and serving safe wake polygons for all 10,000+ lakes in MN is beyond the scope of this demo. It presents results for a subset of 27 lakes, listed in [`scripts/lake_manifest.json`](scripts/lake_manifest.json). 
