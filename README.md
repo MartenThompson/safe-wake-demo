@@ -6,6 +6,13 @@ This repo serves a demo webapp for recreational boaters on Minnesota lakes. It s
 This is an illustration only, not legal or navigational advice.
 
 
+## Motivation: Environmental & Economic Impact
+
+When wake boats operate in shallow water, they disturb sediment and organic material that would otherwise not enter the water column. This increased mixing negatively affects the lake bottom habitat, worsens turbidity, and can foster algal blooms. Municipalities and counties then expend $100k-1M on water quality remediation.
+
+Additional news coverage can be found [here](https://nlslar.com/2026/03/27/wake-boats-under-scrutiny-as-research-reveals-damage-to-minnesota-lakes/), in addition to the [orginal study by the UMN St. Anthony Falls Laboratory (2022)](https://conservancy.umn.edu/items/bd2d2968-21c4-4726-8a61-53e7daafcb56).
+
+
 ## Usage
 
 Users may inspect the safe wake regions around the state before boating. While on the water, the webapp can provide clear indication of whether they are in a safe wake zone or not.
@@ -15,8 +22,9 @@ Users may inspect the safe wake regions around the state before boating. While o
 <img width="340" height="737" alt="image" src="https://github.com/user-attachments/assets/bce467fb-dac2-471b-a67c-8bd3bf595b45" />
 
 
+## Technical Details of Demo
 
-## Site (GitHub Pages)
+### Site (GitHub Pages)
 
 The UI lives under [`docs/`](docs/) so GitHub Pages can serve from the `docs` folder. Browsers often block `fetch()` to local GeoJSON when opening `index.html` as a `file://` URL; run a tiny static server from `docs` for local testing, for example:
 
@@ -26,7 +34,7 @@ The UI lives under [`docs/`](docs/) so GitHub Pages can serve from the `docs` fo
 
 Then open `http://127.0.0.1:8080/`. In GitHub repo settings, set Pages to publish from the `/docs` folder on your default branch (or your chosen source) so assets load over HTTPS; geolocation typically requires a secure context.
 
-## Regenerating map data
+### Regenerating map data
 
 Requires Python 3.12:
 
@@ -40,7 +48,7 @@ That reads [`data/mn_lake_bathymetry/`](data/mn_lake_bathymetry/) shapefiles and
 - [`docs/data/safe_wake.geojson`](docs/data/safe_wake.geojson)
 - [`docs/data/lake_outlines.geojson`](docs/data/lake_outlines.geojson)
 
-## Data source and attribution
+### Data source and attribution
 
 Bathymetry: Minnesota Department of Natural Resources (DNR), *Lake Bathymetric Outlines, Contours, and DEM* (Fish & Wildlife). Dataset page: [Minnesota Geospatial Commons — water-lake-bathymetry](http://gisdata.mn.gov/dataset/water-lake-bathymetry).
 
@@ -52,12 +60,10 @@ https://www.dnr.state.mn.us/sitetools/data_software_license.html
 
 Attribution text: Bathymetry © Minnesota Department of Natural Resources.
 
-## Software license
+### Software license
 
 Application source code in this repository may be under the terms in [`LICENSE`](LICENSE) (GPL). That license applies to code, not to DNR geographic data; DNR data terms remain in effect for the bathymetry and derived GeoJSON.
 
-## Lake subset
+### Lake subset
 
 Ten lakes are listed in [`scripts/lake_manifest.json`](scripts/lake_manifest.json). 
-
-Some lakes have limited contour depth in this dataset (e.g. Calhoun may have no ≥ 20 ft contour); those lakes can show no safe polygon even though the lake appears on the map.
