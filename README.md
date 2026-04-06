@@ -21,10 +21,9 @@ The webapp displays "safe wake" regions on selected lakes. Within safe wake regi
 
 Users may inspect the safe wake regions around the state before boating. While on the water, the webapp can provide clear indication of whether they are in a safe wake zone or not.
 
-<img width="339" height="736" alt="image" src="https://github.com/user-attachments/assets/26f5400b-271b-4761-b3b3-6f05d5c63e3a" />
+<img width="339" height="736" alt="safewake" src="https://github.com/user-attachments/assets/26f5400b-271b-4761-b3b3-6f05d5c63e3a" />
 
-<img width="340" height="737" alt="image" src="https://github.com/user-attachments/assets/bce467fb-dac2-471b-a67c-8bd3bf595b45" />
-
+<img width="338" height="737" alt="nosafewake" src="https://github.com/user-attachments/assets/195930b2-dd94-4f94-a958-9dbc08907d8e" />
 
 ## Technical Details of Demo
 
