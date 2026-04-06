@@ -12,7 +12,7 @@ This is an illustration only, not legal or navigational advice.
 
 When wake boats operate in shallow water, they disturb sediment and organic material that would otherwise not enter the water column. This increased mixing negatively affects the lake bottom habitat, erodes the shoreline, worsens turbidity, and can foster algal blooms. Municipalities and counties then expend $100k-1M on water quality remediation.
 
-Further news coverage can be found [here](https://nlslar.com/2026/03/27/wake-boats-under-scrutiny-as-research-reveals-damage-to-minnesota-lakes/), in addition to the [orginal study by the UMN St. Anthony Falls Laboratory (2022)](https://conservancy.umn.edu/items/bd2d2968-21c4-4726-8a61-53e7daafcb56).
+Further news coverage can be found by the [Lakes Area Review](https://nlslar.com/2026/03/27/wake-boats-under-scrutiny-as-research-reveals-damage-to-minnesota-lakes/) and the [Middle Fork of the Crow River Watershed District](https://www.mfcrow.org/copy-of-permits-guidelines-1), in addition to the [orginal study by the UMN St. Anthony Falls Laboratory (2022)](https://conservancy.umn.edu/items/bd2d2968-21c4-4726-8a61-53e7daafcb56).
 
 
 ## Usage
