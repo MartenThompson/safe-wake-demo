@@ -302,6 +302,13 @@ footer.site-footer a:hover {
   opacity: 1;
 }
 
+/* User location dot: no throb; constant size (see L.Control.Locate.min.css animation) */
+.leaflet-control-locate-location circle {
+  animation: none;
+  transform: none;
+  stroke-width: 2;
+}
+
 /* On-map warning when a lake has no computed safe zone */
 .no-safe-zone-marker {
   background: transparent !important;
