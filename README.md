@@ -19,7 +19,9 @@ Further news coverage can be found by the [Lakes Area Review](https://nlslar.com
 
 The webapp displays "safe wake" regions on selected lakes. Within safe wake regions, boaters are free to create large wakes (e.g. for wake surfing). Outside safe wake regions, boaters should reduce speed/trim to minimize their wake and reduce shoreline erosion and habitat loss. 
 
-Users may inspect the safe wake regions around the state before boating. While on the water, the webapp can provide clear indication of whether they are in a safe wake zone or not.
+Users may inspect the safe wake regions around the state before boating by panning around the map. 
+
+While on the water, users may tap the <img width="20" height="20" alt="compass_icon" src="https://github.com/user-attachments/assets/0dc41302-56bf-4777-9191-3f1fe61d2969" /> icon. The webapp will then follow their location and provide clear indication of whether they are in a safe wake zone or not, as shown below.
 
 <img width="339" height="736" alt="safewake" src="https://github.com/user-attachments/assets/26f5400b-271b-4761-b3b3-6f05d5c63e3a" />
 
